@@ -51,6 +51,7 @@ public class ExampleFlinkHttpOperator extends RichAsyncFunction<String, String> 
         final HttpUriRequest request =
                 RequestBuilder.get(String.format("https://pokeapi.co/api/v2/%s", s))
                         .addHeader(ACCEPT, APPLICATION_JSON.getMimeType())
+                        // TODO: Add some http authentication headers.
                         .build();
 
         final Future<HttpResponse> result = client.execute(request, null);
@@ -71,6 +72,7 @@ public class ExampleFlinkHttpOperator extends RichAsyncFunction<String, String> 
                     } catch (ExecutionException | InterruptedException | IOException e) {
                         logger.error("failed: {}.", s, e);
                         return "Bad";
+                        // TODO: Add some proper logging to DataDog, Prometheus, etc.
                     }
                 })
                 .whenCompleteAsync(
