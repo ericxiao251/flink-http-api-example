@@ -41,15 +41,17 @@ public class PokemonHttpOperator extends RichAsyncFunction<String, String> {
     }
 
     @Override
-    public void asyncInvoke(String s, ResultFuture<String> resultFuture) {
+    public void asyncInvoke(String pokemonNumber, ResultFuture<String> resultFuture) {
         final HttpUriRequest request =
-                RequestBuilder.get(String.format("https://pokeapi.co/api/v2/%s", s))
+                RequestBuilder.get(String.format("https://pokeapi.co/api/v2/pokemon/%s", pokemonNumber))
                         .addHeader(ACCEPT, APPLICATION_JSON.getMimeType())
 //                        .addHeader("Authorization", "Bearer <token>") // Example Bearer HTTP authentication.
                         .build();
 
         final Future<HttpResponse> result = client.execute(request, null);
 
+        // Use CompletableFuture.supplyAsync to return something back to the Flink application, i.e. response code,
+        // response body, etc.
         CompletableFuture.supplyAsync(
                 () -> {
                     try {
@@ -68,22 +70,22 @@ public class PokemonHttpOperator extends RichAsyncFunction<String, String> {
                             object.get("weight").asInt()
                         );
 
-                        logger.info("request completed: {}.", s);
+                        logger.info("request completed: {}.", pokemonNumber);
                         return pokemon.name;
                     } catch (ExecutionException | InterruptedException | IOException e) {
-                        logger.error("failed: {}.", s, e);
+                        logger.error("failed: {}.", pokemonNumber, e);
                         return "Bad";
                         // TODO: Add some proper logging to DataDog, Prometheus, etc.
                     }
                 })
                 .whenCompleteAsync(
-                        (status, ex) -> {
+                        (response, ex) -> {
                             if (ex == null) {
-                                resultFuture.complete(Collections.singleton(status));
-                                logger.info("future completed: {} / {}.", s, status);
+                                resultFuture.complete(Collections.singleton(response));
+                                logger.info("future completed: {} / {}.", pokemonNumber, response);
                             } else {
                                 resultFuture.completeExceptionally(ex);
-                                logger.error("future completed: {}.", s, ex);
+                                logger.info("future completed: {}.", pokemonNumber, ex);
                             }
                         });
     }

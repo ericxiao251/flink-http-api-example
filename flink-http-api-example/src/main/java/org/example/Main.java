@@ -14,11 +14,11 @@ public class Main {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         DataStream<String> inputStream = env.fromElements(
-                "pokemon/5"
-                ,"pokemon/6"
-                ,"pokemon/7"
-                ,"pokemon/8"
-                ,"pokemon/9"
+                "5"
+                ,"6"
+                ,"7"
+                ,"8"
+                ,"9"
         );
 
         DataStream<String> outputStream = AsyncDataStream.unorderedWait(
