@@ -31,7 +31,8 @@ public class PokemonHttpOperator extends RichAsyncFunction<String, String> {
     private static final Logger logger = LoggerFactory.getLogger(PokemonHttpOperator.class);
 
     private transient CloseableHttpAsyncClient client;
-    private final ObjectMapper mapper = new ObjectMapper();
+//    Approach 2.1: Automatically parse POJO.
+//    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void open(Configuration parameters) {
