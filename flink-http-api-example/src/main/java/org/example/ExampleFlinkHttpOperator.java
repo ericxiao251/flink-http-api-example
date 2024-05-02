@@ -49,7 +49,7 @@ public class ExampleFlinkHttpOperator extends RichAsyncFunction<String, String> 
     @Override
     public void asyncInvoke(String s, ResultFuture<String> resultFuture) {
         final HttpUriRequest request =
-                RequestBuilder.get("https://pokeapi.co/api/v2/pokemon/ditto")
+                RequestBuilder.get(String.format("https://pokeapi.co/api/v2/%s", s))
                         .addHeader(ACCEPT, APPLICATION_JSON.getMimeType())
                         .build();
 
