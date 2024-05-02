@@ -45,7 +45,7 @@ public class PokemonHttpOperator extends RichAsyncFunction<String, String> {
         final HttpUriRequest request =
                 RequestBuilder.get(String.format("https://pokeapi.co/api/v2/%s", s))
                         .addHeader(ACCEPT, APPLICATION_JSON.getMimeType())
-                        // TODO: Add some http authentication headers.
+//                        .addHeader("Authorization", "Bearer <token>") // Example Bearer HTTP authentication.
                         .build();
 
         final Future<HttpResponse> result = client.execute(request, null);
