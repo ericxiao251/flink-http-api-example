@@ -20,7 +20,9 @@ public class Main {
                 ,"8"
                 ,"9"
         );
+        inputStream.print();
 
+        // TODO: Flink retries.
         DataStream<String> outputStream = AsyncDataStream.unorderedWait(
                 inputStream,
                 new PokemonHttpOperator(),
@@ -28,9 +30,6 @@ public class Main {
                 TimeUnit.MINUTES,
                 1000
         );
-
-        // TODO: Flink retries.
-
         outputStream.print();
 
         env.execute();
