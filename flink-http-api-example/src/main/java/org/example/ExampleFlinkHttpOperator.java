@@ -14,6 +14,8 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -58,10 +60,17 @@ public class ExampleFlinkHttpOperator extends RichAsyncFunction<String, String> 
                     try {
                         final HttpResponse response = result.get();
                         logger.info("request completed: {}.", s);
-                        return String.valueOf(response.getStatusLine().getStatusCode());
-                    } catch (ExecutionException | InterruptedException e) {
+//                        return String.valueOf(response.getStatusLine().getStatusCode());
+                        InputStream responseBodyStream = response.getEntity().getContent();
+                        int in;
+                        while ((in = responseBodyStream.read()) != -1) {
+                            System.out.print((char) in);
+                        }
+                        System.out.println();
+                        return "Good.";
+                    } catch (ExecutionException | InterruptedException | IOException e) {
                         logger.error("failed: {}.", s, e);
-                        return "NOPE";
+                        return "Bad";
                     }
                 })
                 .whenCompleteAsync(
