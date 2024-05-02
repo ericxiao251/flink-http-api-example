@@ -7,7 +7,7 @@ plugins {
 // artifact properties
 group = 'org.quickstart'
 version = '0.1-SNAPSHOT'
-mainClassName = 'org.quickstart.DataStreamJob'
+mainClassName = 'org.example.Main'
 description = """Flink Quickstart Job"""
 ext {
     javaVersion = '1.8'
