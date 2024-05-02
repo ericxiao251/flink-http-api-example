@@ -1,6 +1,8 @@
 package org.example;
 
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.flink.streaming.api.functions.async.ResultFuture;
 import org.apache.flink.streaming.api.functions.async.RichAsyncFunction;
 import org.apache.http.HttpResponse;
@@ -15,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -24,11 +25,13 @@ import java.util.concurrent.Future;
 import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
-public class ExampleFlinkHttpOperator extends RichAsyncFunction<String, String> {
+public class PokemonHttpOperator extends RichAsyncFunction<String, String> {
     // https://github.com/caarlos0-graveyard/flink-async-http-example/blob/main/src/main/java/dev/caarlos0/StreamingJob.java
 
-    private static final Logger logger = LoggerFactory.getLogger(ExampleFlinkHttpOperator.class);
+    private static final Logger logger = LoggerFactory.getLogger(PokemonHttpOperator.class);
+
     private transient CloseableHttpAsyncClient client;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void open(Configuration parameters) {
@@ -59,16 +62,23 @@ public class ExampleFlinkHttpOperator extends RichAsyncFunction<String, String> 
         CompletableFuture.supplyAsync(
                 () -> {
                     try {
-                        final HttpResponse response = result.get();
-                        logger.info("request completed: {}.", s);
+                        HttpResponse response = result.get();
+//                        Approach 1: Return status code.
 //                        return String.valueOf(response.getStatusLine().getStatusCode());
-                        InputStream responseBodyStream = response.getEntity().getContent();
-                        int in;
-                        while ((in = responseBodyStream.read()) != -1) {
-                            System.out.print((char) in);
-                        }
-                        System.out.println();
-                        return "Good.";
+
+//                        Approach 2: Return a POJO.
+//                        Approach 2.1: Automatically parse POJO.
+//                        Pokemon pokemon = mapper.readValue(response.getEntity().getContent(), Pokemon.class);
+//                        Approach 2.2: Parse only needed fields POJO.
+                        ObjectNode object = new ObjectMapper().readValue(response.getEntity().getContent(), ObjectNode.class);
+                        Pokemon pokemon = new Pokemon(
+                            object.get("name").asText(),
+                            object.get("order").asInt(),
+                            object.get("weight").asInt()
+                        );
+
+                        logger.info("request completed: {}.", s);
+                        return pokemon.name;
                     } catch (ExecutionException | InterruptedException | IOException e) {
                         logger.error("failed: {}.", s, e);
                         return "Bad";

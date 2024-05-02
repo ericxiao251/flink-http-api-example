@@ -15,15 +15,15 @@ public class Main {
 
         DataStream<String> inputStream = env.fromElements(
                 "pokemon/5"
-//                ,"pokemon/6"
-//                ,"pokemon/7"
-//                ,"pokemon/8"
-//                ,"pokemon/9"
+                ,"pokemon/6"
+                ,"pokemon/7"
+                ,"pokemon/8"
+                ,"pokemon/9"
         );
 
         DataStream<String> outputStream = AsyncDataStream.unorderedWait(
                 inputStream,
-                new ExampleFlinkHttpOperator(),
+                new PokemonHttpOperator(),
                 2,
                 TimeUnit.MINUTES,
                 1000
