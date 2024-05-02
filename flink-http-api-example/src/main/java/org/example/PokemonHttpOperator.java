@@ -36,17 +36,7 @@ public class PokemonHttpOperator extends RichAsyncFunction<String, String> {
 
     @Override
     public void open(Configuration parameters) {
-        client =
-                HttpAsyncClients.custom()
-                        .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-                        .setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE)
-                        .setDefaultRequestConfig(
-                                RequestConfig.custom()
-                                        .setConnectTimeout(60 * 1000)
-                                        .setConnectionRequestTimeout(60 * 1000)
-                                        .setSocketTimeout(60 * 1000)
-                                        .build())
-                        .build();
+        client = HttpAsyncClients.custom().build();
         client.start();
     }
 
