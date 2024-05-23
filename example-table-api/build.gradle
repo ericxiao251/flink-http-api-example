@@ -53,6 +53,12 @@ dependencies {
     // --------------------------------------------------------------
     implementation "org.apache.flink:flink-streaming-java:${flinkVersion}"
     implementation "org.apache.flink:flink-clients:${flinkVersion}"
+
+    implementation 'org.apache.flink:flink-table-api-java:1.16.3'
+    compileOnly "org.apache.flink:flink-table-api-java-bridge:${flinkVersion}"
+    compileOnly 'org.apache.flink:flink-table-runtime:1.16.0'
+    compileOnly 'org.apache.flink:flink-table-planner-loader:1.16.0'
+
     // --------------------------------------------------------------
     // Dependencies that should be part of the shadow jar, e.g.
     // connectors. These must be in the flinkShadowJar configuration!
