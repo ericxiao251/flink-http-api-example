@@ -23,3 +23,7 @@
 hs_err_pid*
 replay_pid*
 flink-http-api-example/.idea/uiDesigner.xml
+
+.idea/*
+example-table-api/.gradle/*
+example-table-api/build/*
