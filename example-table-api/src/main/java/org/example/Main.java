@@ -32,7 +32,7 @@ public class Main {
         Table resultTable = tableEnv.sqlQuery(
                 "SELECT l.*, r.version FROM leftTable AS l INNER JOIN rightTable AS r ON l.id = r.id");
         DataStream<Row> resultStream = tableEnv.toChangelogStream(resultTable);
-//        resultStream.print();
+        resultStream.print();
 
         env.execute();
     }
