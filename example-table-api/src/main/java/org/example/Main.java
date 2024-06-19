@@ -7,6 +7,7 @@ import org.apache.flink.types.Row;
 // imports for Table API with bridging to Java DataStream API
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.types.RowKind;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -15,22 +16,29 @@ public class Main {
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
         DataStream<Row> leftStream = env.fromElements(
-                Row.of(1, "a"),
-                Row.of(2, "b"),
-                Row.of(3, "c"));
-        Table leftTable = tableEnv.fromDataStream(leftStream).as("id", "name");
+                Row.ofKind(RowKind.INSERT, 1, "a"),
+                Row.ofKind(RowKind.INSERT, 2, "b"),
+                Row.ofKind(RowKind.DELETE, 1, "a")
+        );
+        Table leftTable = tableEnv.fromChangelogStream(leftStream).as("id", "name");
         tableEnv.createTemporaryView("leftTable", leftTable);
 
         DataStream<Row> rightStream = env.fromElements(
-                Row.of(1, "1"),
-                Row.of(2, "1"),
-                Row.of(2, "2")
+                Row.ofKind(RowKind.INSERT, 1, "1"),
+                Row.ofKind(RowKind.INSERT, 2, "1"),
+                Row.ofKind(RowKind.DELETE, 2, "1")
         );
-        Table rightTable = tableEnv.fromDataStream(rightStream).as("id", "version");
+        Table rightTable = tableEnv.fromChangelogStream(rightStream).as("id", "version");
         tableEnv.createTemporaryView("rightTable", rightTable);
 
         Table resultTable = tableEnv.sqlQuery(
-                "SELECT l.*, r.version FROM leftTable AS l INNER JOIN rightTable AS r ON l.id = r.id");
+                "SELECT " +
+                        "l.*, " +
+                        "r.version " +
+                "FROM leftTable AS l " +
+                "INNER JOIN rightTable AS r" +
+                " ON l.id = r.id"
+        );
         DataStream<Row> resultStream = tableEnv.toChangelogStream(resultTable);
         resultStream.print();
 
