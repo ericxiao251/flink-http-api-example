@@ -18,15 +18,21 @@ public class Main {
         DataStream<Row> leftStream = env.fromElements(
                 Row.ofKind(RowKind.INSERT, 1, "a"),
                 Row.ofKind(RowKind.INSERT, 2, "b"),
-                Row.ofKind(RowKind.DELETE, 1, "a")
+                Row.ofKind(RowKind.INSERT, 3, "c"),
+                Row.ofKind(RowKind.DELETE, 1, "a"),
+                Row.ofKind(RowKind.UPDATE_BEFORE, 3, "c"),
+                Row.ofKind(RowKind.UPDATE_AFTER, 3, "cc")
         );
         Table leftTable = tableEnv.fromChangelogStream(leftStream).as("id", "name");
         tableEnv.createTemporaryView("leftTable", leftTable);
 
         DataStream<Row> rightStream = env.fromElements(
                 Row.ofKind(RowKind.INSERT, 1, "1"),
-                Row.ofKind(RowKind.INSERT, 2, "1"),
-                Row.ofKind(RowKind.DELETE, 2, "1")
+                Row.ofKind(RowKind.INSERT, 2, "2"),
+                Row.ofKind(RowKind.INSERT, 3, "3"),
+                Row.ofKind(RowKind.UPDATE_BEFORE, 2, "2"),
+                Row.ofKind(RowKind.UPDATE_AFTER, 2, "22"),
+                Row.ofKind(RowKind.DELETE, 2, "22")
         );
         Table rightTable = tableEnv.fromChangelogStream(rightStream).as("id", "version");
         tableEnv.createTemporaryView("rightTable", rightTable);
