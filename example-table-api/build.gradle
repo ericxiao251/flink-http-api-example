@@ -10,7 +10,7 @@ version = '0.1-SNAPSHOT'
 mainClassName = 'org.example.Main'
 description = """Flink Quickstart Job"""
 ext {
-    javaVersion = '1.8'
+    javaVersion = '1.16'
     flinkVersion = '1.16.2'
     scalaBinaryVersion = '_2.12'
     slf4jVersion = '1.7.32'
@@ -55,9 +55,9 @@ dependencies {
     implementation "org.apache.flink:flink-clients:${flinkVersion}"
 
     implementation 'org.apache.flink:flink-table-api-java:1.16.3'
-    compileOnly "org.apache.flink:flink-table-api-java-bridge:${flinkVersion}"
-    compileOnly 'org.apache.flink:flink-table-runtime:1.16.0'
-    compileOnly 'org.apache.flink:flink-table-planner-loader:1.16.0'
+    compileOnly "org.apache.flink:flink-table-api-java-bridge:1.16.0"
+    runtimeOnly 'org.apache.flink:flink-table-runtime:1.16.0'
+    runtimeOnly 'org.apache.flink:flink-table-planner-loader:1.16.0'
 
     // --------------------------------------------------------------
     // Dependencies that should be part of the shadow jar, e.g.

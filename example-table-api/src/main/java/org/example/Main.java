@@ -5,8 +5,8 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.types.Row;
 
 // imports for Table API with bridging to Java DataStream API
-import org.apache.flink.table.api.*;
-import org.apache.flink.table.api.bridge.java.*;
+import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -32,7 +32,7 @@ public class Main {
         Table resultTable = tableEnv.sqlQuery(
                 "SELECT l.*, r.version FROM leftTable AS l INNER JOIN rightTable AS r ON l.id = r.id");
         DataStream<Row> resultStream = tableEnv.toChangelogStream(resultTable);
-        resultStream.print();
+//        resultStream.print();
 
         env.execute();
     }
